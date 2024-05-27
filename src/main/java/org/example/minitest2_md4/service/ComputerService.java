@@ -30,10 +30,10 @@ public class ComputerService implements IComputerService{
 
     @Override
     public void save(Computer computer) throws DuplicateCodeException {
-      try{
-          computerRepo.save(computer);
-      }catch(DataIntegrityViolationException e){
-          throw new DuplicateCodeException(" ma may tinh khong duoc trung lap ");
+        if (computerRepo.existsComputerByComputerCode(computer.getComputerCode())) {
+            throw new DuplicateCodeException("ma may tinh khong duoc trung lap: "+computer.getComputerCode());
+        } else {
+            computerRepo.save(computer);
         }
     }
 
@@ -49,5 +49,8 @@ public class ComputerService implements IComputerService{
     @Override
     public Page<Computer> findComputerByComputerNameContaining(String name, Pageable pageable) {
         return computerRepo.findComputerByComputerNameContaining(name,pageable);
+    }
+    public Page<Computer> findComputer(String name, String code, String producer, Pageable pageable){
+        return computerRepo.finComputer(name, code, producer,pageable);
     }
 }

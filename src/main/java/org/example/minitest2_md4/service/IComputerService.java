@@ -14,4 +14,5 @@ public interface IComputerService {
     void save(Computer computer) throws DuplicateCodeException;
     void delete(Long id) throws ResourceNotFoundException;
     Page<Computer> findComputerByComputerNameContaining(String name, Pageable pageable);
+    Page<Computer> findComputer(String name, String code, String producer, Pageable pageable);
 }

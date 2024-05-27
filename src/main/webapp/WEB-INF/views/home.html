@@ -13,7 +13,7 @@
     /* CSS toast */
     .toast-container {
         position: fixed;
-        top: 20px;
+        top: 100px;
         left: 50%;
         transform: translateX(-50%);
         max-width: 300px;
@@ -33,6 +33,15 @@
     #toast, #toast2, #toast3.show {
         display: block;
         animation: fadeOut 3s forwards;
+    }
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            display: none;
+        }
     }
 
     .icon {
@@ -130,42 +139,57 @@
     tbody th button:hover, tbody td button:hover {
         background-color: #0056b3;
     }
-    h2{
+
+    h2 {
         margin-top: 10px;
         background: bisque;
         text-align: center;
-
-
     }
 </style>
 <body>
 <h2>Computer Management</h2>
+
+<!-- Status Toasts -->
 <div th:if="${status == 1}" class="toast-container">
     <div id="toast" class="show">
-        <span> Đã Thêm Mới Thành công</span>
+        <span>Đã Thêm Mới Thành công</span>
         <span class="icon">&#10004;</span>
     </div>
 </div>
-<div th:if="${status==2}" class="toast-container">
-    <div id="toast2" class="show2">
-        <span> Đã Sửa Thành công</span>
+<div th:if="${status == 2}" class="toast-container">
+    <div id="toast2" class="show">
+        <span>Đã Sửa Thành công</span>
         <span class="icon">&#10004;</span>
     </div>
 </div>
 <div th:if="${status == 3}" class="toast-container">
-    <div id="toast3" class="show3">
-        <span> Đã Xoá Thành công</span>
+    <div id="toast3" class="show">
+        <span>Đã Xoá Thành công</span>
         <span class="icon">&#10004;</span>
     </div>
 </div>
 
+<!-- Add New Button -->
 <a class="btn btn-success" th:href="@{/add}">Thêm Mới</a>
+
+<!-- Search Container -->
+<!--<div class="search-container">-->
+<!--    <form action="/" method="get">-->
+<!--        <input type="text" name="search" placeholder="Tên máy" th:value="${search}">-->
+<!--        <button type="submit">Tìm kiếm</button>-->
+<!--    </form>-->
+<!--</div>-->
 <div class="search-container">
     <form action="/" method="get">
-        <input type="text" name="search" placeholder="Tên máy" th:value="${search}">
+        <input type="text" name="computerName" placeholder="Tên máy" th:value="${search.computerName}">
+        <input type="text" name="computerCode" placeholder="Mã máy tính" th:value="${search.computerCode}">
+        <input type="text" name="producer" placeholder="Nhà sản xuất" th:value="${search.producer}">
         <button type="submit">Tìm kiếm</button>
     </form>
 </div>
+
+
+<!-- Data Table -->
 <table>
     <thead>
     <tr>
@@ -174,7 +198,7 @@
         <th>Tên máy tính</th>
         <th>Loại máy tính</th>
         <th>Nhà sản xuất</th>
-        <th colspan="2" style="text-align: center">action</th>
+        <th colspan="3" style="text-align: center">action</th>
     </tr>
     </thead>
     <tbody>
@@ -186,6 +210,7 @@
         <th th:text="${computer.typeComputer.typeComputerName}"></th>
         <th th:text="${computer.producer}"></th>
         <th><a class="btn btn-primary" th:href="'/edit/' + ${computer.id}">Chỉnh Sửa</a></th>
+        <th><a class="btn btn-primary" th:href="'/view/' + ${computer.id}">Chi tiết</a></th>
         <th>
             <button type="button" class="btn btn-primary"
                     th:attr="data-id=${computer.id}, data-name=${computer.computerName}"
@@ -234,15 +259,15 @@
             }, 5000);
         }
         var toast2 = document.getElementById('toast2');
-        if (toast2 && toast2.classList.contains('show2')) {
+        if (toast2 && toast2.classList.contains('show')) {
             setTimeout(function () {
-                toast2.classList.remove('show2');
+                toast2.classList.remove('show');
             }, 5000);
         }
         var toast3 = document.getElementById('toast3');
-        if (toast3 && toast3.classList.contains('show3')) {
+        if (toast3 && toast3.classList.contains('show')) {
             setTimeout(function () {
-                toast3.classList.remove('show3');
+                toast3.classList.remove('show');
             }, 5000);
         }
     });

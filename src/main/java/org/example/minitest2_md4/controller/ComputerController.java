@@ -21,7 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -31,15 +33,38 @@ public class ComputerController {
     private IComputerService computerService;
     @Autowired
     private ITypeComputerService typeComputerService;
-    @GetMapping("")
-    public String showAll(Model model, @RequestParam(required = false, defaultValue = "") String search,
-                              @RequestParam(required = false, defaultValue = "0") int page) {
-        Pageable pageable = PageRequest.of(page,2);
-        Page<Computer> computers = computerService.findComputerByComputerNameContaining(search, pageable);
-        model.addAttribute("search", search);
+//    @GetMapping("")
+//    public String showAll(Model model, @RequestParam(required = false, defaultValue = "") String search,
+//
+//                              @RequestParam(required = false, defaultValue = "0") int page) {
+//        Pageable pageable = PageRequest.of(page,2);
+//        Page<Computer> computers = computerService.findComputerByComputerNameContaining(search, pageable);
+//        model.addAttribute("search", search);
+//        model.addAttribute("computerPage", computers);
+//        return "/home";
+//    }
+
+    @GetMapping("/")
+    public String showAll(Model model,
+                          @RequestParam(required = false, defaultValue = "") String computerName,
+                          @RequestParam(required = false, defaultValue = "") String computerCode,
+                          @RequestParam(required = false, defaultValue = "") String producer,
+                          @RequestParam(required = false, defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 2);
+        Page<Computer> computers = computerService.findComputer(computerName, computerCode, producer, pageable);
+
+        Map<String, String> searchParams = new HashMap<>();
+        searchParams.put("computerName", computerName);
+        searchParams.put("computerCode", computerCode);
+        searchParams.put("producer", producer);
+
+        model.addAttribute("search", searchParams);
         model.addAttribute("computerPage", computers);
         return "/home";
     }
+
+
+
     @GetMapping("/add")
     public String showFormCreate(Model model){
         ComputerDTO computerDTO = new ComputerDTO();
@@ -96,6 +121,17 @@ public class ComputerController {
         computerService.delete(id);
         redirectAttributes.addFlashAttribute("status", 3);
         return "redirect:/";
+    }
+    @GetMapping("/view/{id}")
+    public String view(Model model, @PathVariable Long id) throws ResourceNotFoundException{
+        Computer computer = new Computer();
+        ComputerDTO computerDTO = new ComputerDTO();
+        computer = computerService.findById(id);
+        BeanUtils.copyProperties(computer, computerDTO);
+        List<TypeComputer> typeComputerList = typeComputerService.findAll();
+        model.addAttribute("computerDTO", computerDTO);
+        model.addAttribute("typeComputerList", typeComputerList);
+        return "/view";
     }
 
 
